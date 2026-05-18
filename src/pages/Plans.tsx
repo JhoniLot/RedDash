@@ -31,8 +31,7 @@ const Plans: React.FC = () => {
         'Sincronização ao vivo de Meta Ads',
         'Sincronização ao vivo de TikTok Ads',
         'Controle de status ativas/pausadas',
-        'Exportação de relatórios em CSV',
-        'Suporte premium por e-mail'
+        'Exportação de relatórios em CSV'
       ]
     },
     {
@@ -45,9 +44,8 @@ const Plans: React.FC = () => {
       popular: true,
       features: [
         'Tudo do Plano Solo',
-        'Multi-clientes (Workspaces separados)',
-        'Time de até 5 pessoas',
-        'Suporte prioritário por WhatsApp',
+        'Multi-clientes (Workspaces separados) - Em breve',
+        'Time de até 5 pessoas - Em breve',
         'Dashboard integrada com conversões S2S'
       ]
     },
@@ -63,8 +61,7 @@ const Plans: React.FC = () => {
         '100% White-label (Sem marca RedDash)',
         'Logomarca customizada da sua Agência',
         'Domínio customizado (Opcional)',
-        'Apresentação premium para seus clientes',
-        'Suporte VIP do nosso time de engenharia'
+        'Apresentação premium para seus clientes'
       ]
     }
   ];

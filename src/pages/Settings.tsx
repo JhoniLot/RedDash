@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { RedTrackService } from '../services/redtrack';
 import { motion } from 'framer-motion';
-import { Key, Eye, EyeOff, CheckCircle2, XCircle, RefreshCw, LogOut, Copy, Check, Link2, Info } from 'lucide-react';
+import { Key, Eye, EyeOff, CheckCircle2, XCircle, RefreshCw, LogOut, Copy, Check, Link2, Info, Sparkles } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 
 const UTM_PLATFORMS = [
@@ -24,7 +24,17 @@ const UTM_PLATFORMS = [
 ];
 
 const Settings: React.FC = () => {
-  const { apiKey, setApiKey, isConnected, setIsConnected } = useAppContext();
+  const { 
+    apiKey, 
+    setApiKey, 
+    isConnected, 
+    setIsConnected,
+    userPlan,
+    customLogo,
+    setCustomLogo,
+    customName,
+    setCustomName
+  } = useAppContext();
   const [tempKey, setTempKey] = useState(apiKey);
   const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
@@ -238,11 +248,82 @@ const Settings: React.FC = () => {
           </div>
         </div>
 
-        {/* Preferences (disabled) */}
-        <div className="card p-5 opacity-40 pointer-events-none select-none">
-          <h3 className="text-sm font-semibold text-white mb-1">Display Preferences</h3>
-          <p className="text-xs text-[--color-text-secondary]">More settings coming soon.</p>
-        </div>
+        {/* Configurações White-Label */}
+        {userPlan === 'enterprise' ? (
+          <div className="card p-5 border-primary/30">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Sparkles size={16} className="text-primary animate-pulse" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Personalização White-Label</h3>
+                <p className="text-xs text-[--color-text-secondary]">Substitua a identidade do RedDash pela sua marca</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-[--color-text-secondary] mb-2">
+                  Nome da sua Agência
+                </label>
+                <input
+                  type="text"
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  className="w-full bg-[--color-background] border border-border rounded-lg px-4 py-2.5 text-sm text-white placeholder:text-[--color-text-muted] focus:border-primary outline-none transition-all"
+                  placeholder="Ex: Prime Tech Agency"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[--color-text-secondary] mb-2">
+                  URL da Logo da sua Agência
+                </label>
+                <input
+                  type="text"
+                  value={customLogo}
+                  onChange={(e) => setCustomLogo(e.target.value)}
+                  className="w-full bg-[--color-background] border border-border rounded-lg px-4 py-2.5 text-sm text-white placeholder:text-[--color-text-muted] focus:border-primary outline-none transition-all font-mono"
+                  placeholder="Ex: https://suaagencia.com.br/logo.png"
+                />
+              </div>
+
+              <div className="p-3 bg-primary/5 border border-primary/10 rounded-lg">
+                <p className="text-[11px] text-primary leading-relaxed">
+                  💡 <strong>Dica:</strong> A sua marca e logo serão aplicadas automaticamente no cabeçalho e na barra lateral da dashboard em tempo real!
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="card p-5 opacity-70 relative overflow-hidden border border-dashed border-border">
+            <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center p-4 text-center">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+                <Sparkles size={16} />
+              </div>
+              <h4 className="text-xs font-bold text-white mb-1">Personalização White-Label 🔒</h4>
+              <p className="text-[10px] text-[--color-text-secondary] max-w-[280px] mb-3">
+                Remova a marca do RedDash e configure a sua própria logo e nome para apresentar relatórios premium para seus clientes!
+              </p>
+              <button
+                onClick={() => {
+                  alert('Acesse a aba "Planos" no menu lateral para fazer o upgrade para o plano Enterprise e desbloquear esta funcionalidade!');
+                }}
+                className="bg-primary/20 hover:bg-primary/30 border border-primary/35 text-white text-[10px] font-bold px-3 py-1.5 rounded transition-all active:scale-[0.98]"
+              >
+                Desbloquear no Plano Enterprise
+              </button>
+            </div>
+            
+            {/* Blurry mock fields so they can see what it is */}
+            <div className="filter blur-[1.5px] select-none pointer-events-none">
+              <h3 className="text-sm font-semibold text-white mb-1">White-Label Branding</h3>
+              <p className="text-xs text-[--color-text-secondary] mb-4">Mock display preferences</p>
+              <div className="h-9 bg-white/5 rounded-lg mb-3" />
+              <div className="h-9 bg-white/5 rounded-lg" />
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );

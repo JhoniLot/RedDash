@@ -21,7 +21,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, collapsed, setCollapsed }) => {
-  const { isConnected } = useAppContext();
+  const { isConnected, userPlan, customLogo, customName } = useAppContext();
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -33,6 +33,10 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, collapsed,
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
+  const showCustomBranding = userPlan === 'enterprise';
+  const logoSource = showCustomBranding && customLogo ? customLogo : null;
+  const displayName = showCustomBranding && customName ? customName : 'RedDash';
+
   return (
     <aside 
       className={`fixed left-0 top-0 h-screen bg-surface border-r border-border transition-all duration-300 z-50 flex flex-col
@@ -40,12 +44,20 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, collapsed,
     >
       {/* Logo */}
       <div className={`flex items-center gap-2.5 px-4 h-14 border-b border-border shrink-0 ${collapsed ? 'justify-center' : ''}`}>
-        <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
-          <Activity className="w-4 h-4 text-white" strokeWidth={2.5} />
-        </div>
+        {logoSource ? (
+          <img 
+            src={logoSource} 
+            alt={displayName} 
+            className="w-7 h-7 rounded-lg object-cover shrink-0 border border-border"
+          />
+        ) : (
+          <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center shrink-0">
+            <Activity className="w-4 h-4 text-white" strokeWidth={2.5} />
+          </div>
+        )}
         {!collapsed && (
-          <span className="text-[15px] font-semibold tracking-tight text-white">
-            RedDash
+          <span className="text-[15px] font-semibold tracking-tight text-white truncate max-w-[140px]">
+            {displayName}
           </span>
         )}
       </div>

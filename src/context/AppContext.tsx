@@ -34,6 +34,10 @@ interface AppContextType {
   refreshData: () => void;
   userPlan: 'solo' | 'agency' | 'enterprise';
   setUserPlan: (plan: 'solo' | 'agency' | 'enterprise') => void;
+  customLogo: string;
+  setCustomLogo: (url: string) => void;
+  customName: string;
+  setCustomName: (name: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -55,6 +59,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange());
   const [currency, setCurrencyState] = useState<'USD' | 'BRL' | 'EUR'>(() => (localStorage.getItem('@reddash:currency') as 'USD' | 'BRL' | 'EUR') || 'USD');
   const [userPlan, setUserPlanState] = useState<'solo' | 'agency' | 'enterprise'>(() => (localStorage.getItem('@reddash:user_plan') as 'solo' | 'agency' | 'enterprise') || 'solo');
+  const [customLogo, setCustomLogoState] = useState(() => localStorage.getItem('@reddash:custom_logo') || '');
+  const [customName, setCustomNameState] = useState(() => localStorage.getItem('@reddash:custom_name') || '');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,6 +79,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const setUserPlan = (plan: 'solo' | 'agency' | 'enterprise') => {
     localStorage.setItem('@reddash:user_plan', plan);
     setUserPlanState(plan);
+  };
+  const setCustomLogo = (url: string) => {
+    localStorage.setItem('@reddash:custom_logo', url);
+    setCustomLogoState(url);
+  };
+  const setCustomName = (name: string) => {
+    localStorage.setItem('@reddash:custom_name', name);
+    setCustomNameState(name);
   };
 
   // Load from Supabase on Mount — skip if URL is clearly invalid
@@ -155,7 +169,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       refreshKey,
       refreshData,
       userPlan,
-      setUserPlan
+      setUserPlan,
+      customLogo,
+      setCustomLogo,
+      customName,
+      setCustomName
     }}>
       {!loading && children}
     </AppContext.Provider>
