@@ -15,11 +15,12 @@ import { useAppContext } from '../context/AppContext';
 interface SidebarProps {
   activePage: string;
   setActivePage: (page: string) => void;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, collapsed, setCollapsed }) => {
   const { isConnected } = useAppContext();
-  const [collapsed, setCollapsed] = React.useState(false);
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },

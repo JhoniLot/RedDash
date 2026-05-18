@@ -46,10 +46,10 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({ conversions }) => {
                 className="border-b border-border last:border-0 hover:bg-white/[0.02] transition-colors"
               >
                 <td className="px-5 py-3.5">
-                  <p className="text-xs text-white font-mono">
+                  <p className="text-xs font-medium text-white">
                     {new Date(conv.created_at).toLocaleDateString()}
                   </p>
-                  <p className="text-[10px] text-[--color-text-muted] font-mono">
+                  <p className="text-[10px] text-[--color-text-muted]">
                     {new Date(conv.created_at).toLocaleTimeString()}
                   </p>
                 </td>
@@ -58,15 +58,22 @@ const ConversionsTable: React.FC<ConversionsTableProps> = ({ conversions }) => {
                   <p className="text-[10px] text-[--color-text-muted] truncate max-w-[120px]">{conv.campaign_name || '—'}</p>
                 </td>
                 <td className="px-5 py-3.5 text-right">
-                  <span className="text-xs font-semibold text-white font-mono">{formatCurrency(conv.revenue)}</span>
+                  <span className="text-sm font-semibold text-white">{formatCurrency(conv.revenue)}</span>
                 </td>
                 <td className="px-5 py-3.5 text-right">
-                  <span className={`text-xs font-semibold font-mono ${(conv.netProfit || 0) > 0 ? 'text-success' : 'text-danger'}`}>
+                  <span className={`text-sm font-semibold ${(conv.netProfit || 0) > 0 ? 'text-success' : 'text-danger'}`}>
                     {formatCurrency(conv.netProfit || 0)}
                   </span>
                 </td>
                 <td className="px-5 py-3.5">
-                  <span className="tag-neutral">{conv.traffic_source}</span>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${
+                    conv.traffic_source?.toLowerCase().includes('tiktok') ? 'bg-[#00F2FE]/5 border-[#00F2FE]/15 text-[#00F2FE]' :
+                    conv.traffic_source?.toLowerCase().includes('facebook') || conv.traffic_source?.toLowerCase().includes('meta') ? 'bg-[#1877F2]/5 border-[#1877F2]/15 text-[#1877F2]' :
+                    conv.traffic_source?.toLowerCase().includes('google') ? 'bg-[#34A853]/5 border-[#34A853]/15 text-[#34A853]' :
+                    'bg-white/5 border-white/10 text-[--color-text-secondary]'
+                  }`}>
+                    {conv.traffic_source}
+                  </span>
                 </td>
               </tr>
             ))}

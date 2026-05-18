@@ -30,21 +30,23 @@ const MainChart: React.FC<MainChartProps> = ({ data }) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-surface border border-border p-3 rounded-lg shadow-2xl">
-          <p className="text-[10px] text-[--color-text-secondary] mb-2 font-mono uppercase tracking-wider">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center gap-3">
-              <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
-              <span className="text-xs text-[--color-text-secondary]">{entry.name}</span>
-              <span className="text-xs font-semibold text-white font-mono ml-auto pl-4">
-                {entry.name === 'ROAS' ? `${(entry.value || 0).toFixed(2)}x` : 
-                 entry.name === 'Conversions' ? entry.value :
-                 new Intl.NumberFormat(currency === 'BRL' ? 'pt-BR' : 'en-US', {
-                   style: 'currency', currency: currency
-                 }).format(entry.value)}
-              </span>
-            </div>
-          ))}
+        <div className="bg-surface/80 backdrop-blur-md border border-border p-3.5 rounded-xl shadow-[0_12px_30px_-10px_rgba(0,0,0,0.6)]">
+          <p className="text-[9px] text-[--color-text-muted] mb-2 font-mono uppercase tracking-widest">{label}</p>
+          <div className="space-y-1.5">
+            {payload.map((entry: any, index: number) => (
+              <div key={index} className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
+                <span className="text-xs text-[--color-text-secondary] font-medium">{entry.name}</span>
+                <span className="text-xs font-semibold text-white font-mono ml-auto pl-4">
+                  {entry.name === 'ROAS' ? `${(entry.value || 0).toFixed(2)}x` : 
+                   entry.name === 'Conversions' ? entry.value :
+                   new Intl.NumberFormat(currency === 'BRL' ? 'pt-BR' : 'en-US', {
+                     style: 'currency', currency: currency
+                   }).format(entry.value)}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -87,24 +89,24 @@ const MainChart: React.FC<MainChartProps> = ({ data }) => {
                 <stop offset="100%" stopColor="#E53E3E" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.04)" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
             <XAxis 
               dataKey="date" 
               stroke="transparent"
-              tick={{ fill: '#3D4450', fontSize: 10, fontFamily: 'JetBrains Mono' }}
+              tick={{ fill: '#4E5766', fontSize: 10, fontFamily: 'JetBrains Mono' }}
               tickLine={false} 
               axisLine={false}
               tickFormatter={(val) => val.split('-').slice(1).reverse().join('/')}
             />
             <YAxis 
               stroke="transparent"
-              tick={{ fill: '#3D4450', fontSize: 10, fontFamily: 'JetBrains Mono' }}
+              tick={{ fill: '#4E5766', fontSize: 10, fontFamily: 'JetBrains Mono' }}
               tickLine={false} 
               axisLine={false}
               tickFormatter={(val) => val > 1000 ? `${(val/1000).toFixed(1)}k` : val}
               width={40}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeWidth: 1 }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeWidth: 1.2, strokeDasharray: '3 3' }} />
             <Area 
               type="monotone" 
               dataKey={activeMetric} 

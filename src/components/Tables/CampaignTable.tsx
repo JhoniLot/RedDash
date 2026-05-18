@@ -54,30 +54,32 @@ const CampaignTable: React.FC<CampaignTableProps> = ({ campaigns }) => {
                   className="border-b border-border last:border-0 hover:bg-white/[0.02] transition-colors"
                 >
                   <td className="px-5 py-3.5">
-                    <p className="text-sm font-medium text-white truncate max-w-[180px]">{camp.name}</p>
-                    <p className="text-[10px] text-[--color-text-muted] font-mono mt-0.5">{camp.id}</p>
+                    <p className="text-xs font-semibold text-white truncate max-w-[180px]">{camp.name}</p>
                   </td>
                   <td className="px-5 py-3.5">
-                    <span className={camp.status === 'active' ? 'tag-success' : 'tag-neutral'}>
-                      {camp.status}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${camp.status === 'active' ? 'bg-success animate-pulse' : 'bg-[--color-text-muted]'}`} />
+                      <span className="text-xs font-medium text-[--color-text-secondary] capitalize">
+                        {camp.status === 'active' ? 'Ativo' : 'Pausado'}
+                      </span>
+                    </div>
+                  </td>
+                   <td className="px-5 py-3.5 text-right">
+                    <span className="text-sm font-medium text-[--color-text-secondary]">{formatCurrency(camp.cost)}</span>
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <span className="text-xs text-[--color-text-secondary] font-mono">{formatCurrency(camp.cost)}</span>
-                  </td>
-                  <td className="px-5 py-3.5 text-right">
-                    <span className="text-xs font-semibold text-white font-mono">{formatCurrency(camp.revenue)}</span>
+                    <span className="text-sm font-semibold text-white">{formatCurrency(camp.revenue)}</span>
                   </td>
                   <td className="px-5 py-3.5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <span className="text-xs font-semibold text-white font-mono">
+                      <span className="text-sm font-semibold text-white">
                         {(camp.roas || 0).toFixed(2)}x
                       </span>
                       <span className={roasInfo.cls}>{roasInfo.label}</span>
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <span className="text-xs text-[--color-text-secondary] font-mono">
+                    <span className="text-sm font-medium text-[--color-text-secondary]">
                       {(camp.conversions || 0).toLocaleString()}
                     </span>
                   </td>

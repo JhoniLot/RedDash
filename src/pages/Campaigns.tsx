@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Download, Columns, ArrowUpRight, Filter, ToggleLeft, ToggleRight, Sparkles } from 'lucide-react';
 import { exportToCSV } from '../utils/export';
 import PageHeader from '../components/PageHeader';
+import { MetaLogo, TikTokLogo, GoogleAdsLogo } from '../components/BrandLogos';
 
 const AVAILABLE_COLUMNS = [
   { id: 'status',      label: 'Status',      align: 'left'  },
@@ -361,11 +362,10 @@ const Campaigns: React.FC = () => {
                   <td className="px-5 py-3.5 sticky left-0 bg-surface group-hover:bg-[--color-surface-2] transition-colors z-10">
                     <div className="flex items-center gap-2.5 max-w-[240px]">
                       {/* Platform source badge */}
-                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                        getCampaignPlatform(camp) === 'tiktok' ? 'bg-[#00F2FE]' : 
-                        getCampaignPlatform(camp) === 'meta' ? 'bg-[#1877F2]' : 
-                        getCampaignPlatform(camp) === 'google' ? 'bg-[#34A853]' : 'bg-gray-500'
-                      }`} />
+                      {getCampaignPlatform(camp) === 'tiktok' && <TikTokLogo size={14} className="bg-white p-0.5 rounded shrink-0" />}
+                      {getCampaignPlatform(camp) === 'meta' && <MetaLogo size={14} className="shrink-0" />}
+                      {getCampaignPlatform(camp) === 'google' && <GoogleAdsLogo size={14} className="shrink-0" />}
+                      {getCampaignPlatform(camp) === 'other' && <div className="w-1.5 h-1.5 rounded-full bg-gray-500 shrink-0" />}
                       <span className="text-sm font-medium text-white truncate" title={camp.name}>
                         {camp.name}
                       </span>
@@ -377,7 +377,7 @@ const Campaigns: React.FC = () => {
                     if (!selectedColumns.includes(col.id)) return null;
 
                     let content: React.ReactNode = null;
-                    let extraClass = `px-5 py-3.5 text-xs font-mono text-${col.align} `;
+                    let extraClass = `px-5 py-3.5 text-sm font-medium text-${col.align} `;
 
                     switch (col.id) {
                       case 'status':

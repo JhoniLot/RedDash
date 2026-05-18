@@ -37,7 +37,7 @@ const ProfitDonut: React.FC<ProfitDonutProps> = ({ metrics }) => {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-surface border border-border p-3 rounded-lg shadow-xl">
+        <div className="bg-surface/80 backdrop-blur-md border border-border p-3.5 rounded-xl shadow-[0_12px_30px_-10px_rgba(0,0,0,0.6)]">
           <p className="text-xs font-semibold text-white mb-1">{payload[0].name}</p>
           <p className="text-xs text-[--color-text-secondary] font-mono">{formatValue(payload[0].value)}</p>
         </div>

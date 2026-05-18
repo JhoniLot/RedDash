@@ -85,16 +85,16 @@ const Products: React.FC = () => {
                       : <span className="tag-neutral">Pending</span>
                     }
                   </td>
-                  <td className="px-5 py-3.5 text-right text-xs text-[--color-text-secondary] font-mono">
+                  <td className="px-5 py-3.5 text-right text-sm font-medium text-[--color-text-secondary]">
                     {config ? formatCurrency(config.productCost) : '—'}
                   </td>
-                  <td className="px-5 py-3.5 text-right text-xs text-[--color-text-secondary] font-mono">
+                  <td className="px-5 py-3.5 text-right text-sm font-medium text-[--color-text-secondary]">
                     {config ? `${config.taxRate}%` : '—'}
                   </td>
-                  <td className="px-5 py-3.5 text-right text-xs text-[--color-text-secondary] font-mono">
+                  <td className="px-5 py-3.5 text-right text-sm font-medium text-[--color-text-secondary]">
                     {config ? `${config.platformFee}%` : '—'}
                   </td>
-                  <td className="px-5 py-3.5 text-right text-xs text-[--color-text-secondary] font-mono">
+                  <td className="px-5 py-3.5 text-right text-sm font-medium text-[--color-text-secondary]">
                     {config ? formatCurrency(config.otherFees) : '—'}
                   </td>
                   <td className="px-5 py-3.5 text-right">

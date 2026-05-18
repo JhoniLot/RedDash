@@ -53,17 +53,19 @@ const Financial: React.FC = () => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-surface border border-border p-3 rounded-lg shadow-xl">
-          <p className="text-[10px] text-[--color-text-secondary] mb-2 font-mono uppercase">{label}</p>
-          {payload.map((entry: any, i: number) => (
-            <div key={i} className="flex items-center gap-3 mb-1">
-              <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: entry.fill }} />
-              <span className="text-xs text-[--color-text-secondary]">{entry.name}</span>
-              <span className="text-xs font-semibold text-white font-mono ml-auto pl-4">
-                {formatCurrency(entry.value)}
-              </span>
-            </div>
-          ))}
+        <div className="bg-surface/80 backdrop-blur-md border border-border p-3.5 rounded-xl shadow-[0_12px_30px_-10px_rgba(0,0,0,0.6)]">
+          <p className="text-[9px] text-[--color-text-muted] mb-2 uppercase tracking-widest">{label}</p>
+          <div className="space-y-1.5">
+            {payload.map((entry: any, i: number) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: entry.fill }} />
+                <span className="text-xs text-[--color-text-secondary] font-medium">{entry.name}</span>
+                <span className="text-xs font-semibold text-white ml-auto pl-4">
+                  {formatCurrency(entry.value)}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -112,7 +114,7 @@ const Financial: React.FC = () => {
                   <Icon size={14} style={{ color: card.color }} />
                 </div>
               </div>
-              <span className="text-lg font-semibold text-white font-mono">{card.value}</span>
+              <span className="text-2xl font-bold text-white tracking-tight">{card.value}</span>
             </div>
           );
         })}
@@ -126,24 +128,24 @@ const Financial: React.FC = () => {
           <div className="h-[320px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={reportData.slice(-10)} barSize={8} barGap={2}>
-                <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
                 <XAxis
                   dataKey="date"
                   stroke="transparent"
-                  tick={{ fill: '#3D4450', fontSize: 10, fontFamily: 'JetBrains Mono' }}
+                  tick={{ fill: '#4E5766', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(val) => val.split('-').slice(1).reverse().join('/')}
                 />
                 <YAxis
                   stroke="transparent"
-                  tick={{ fill: '#3D4450', fontSize: 10, fontFamily: 'JetBrains Mono' }}
+                  tick={{ fill: '#4E5766', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => v > 1000 ? `${(v / 1000).toFixed(0)}k` : v}
                   width={36}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
                 <Legend
                   iconType="circle"
                   iconSize={6}
@@ -170,7 +172,7 @@ const Financial: React.FC = () => {
             {statRows.map((row, i) => (
               <div key={i} className="flex items-center justify-between py-3.5 border-b border-border last:border-0">
                 <span className="text-xs text-[--color-text-secondary]">{row.label}</span>
-                <span className="text-sm font-semibold text-white font-mono">{row.value}</span>
+                <span className="text-sm font-semibold text-white">{row.value}</span>
               </div>
             ))}
           </div>
@@ -186,7 +188,7 @@ const Financial: React.FC = () => {
               </div>
               <div>
                 <span
-                  className="text-2xl font-bold font-mono block"
+                  className="text-3xl font-bold block"
                   style={{ color: metrics.netProfit >= 0 ? '#2ECC71' : '#E53E3E' }}
                 >
                   {formatCurrency(metrics.netProfit)}

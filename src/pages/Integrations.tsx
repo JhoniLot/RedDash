@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '../components/PageHeader';
 import { Share2, Check, Sparkles, AlertCircle, Trash2, ArrowRight } from 'lucide-react';
+import { MetaLogo, TikTokLogo, GoogleAdsLogo } from '../components/BrandLogos';
+
+const renderBrandLogo = (id: string, size = 24) => {
+  switch (id) {
+    case 'meta': return <MetaLogo size={size} />;
+    case 'tiktok': return <TikTokLogo size={size} className="bg-white p-1 rounded" />;
+    case 'google': return <GoogleAdsLogo size={size} />;
+    default: return null;
+  }
+};
 
 interface Integration {
   id: string;
@@ -219,8 +229,8 @@ const Integrations: React.FC = () => {
             >
               <div className="relative w-16 h-16 mx-auto flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border-4 border-primary/20 animate-ping" />
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl font-bold animate-pulse">
-                  {integrations.find(i => i.id === connectingId)?.logo}
+                <div className="w-12 h-12 rounded-full bg-surface-2 flex items-center justify-center animate-pulse">
+                  {renderBrandLogo(connectingId, 28)}
                 </div>
               </div>
 
@@ -263,9 +273,11 @@ const Integrations: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <span className="text-3xl">{item.logo}</span>
+                  <div className="w-10 h-10 rounded-lg bg-surface-2 flex items-center justify-center border border-border">
+                    {renderBrandLogo(item.id, 22)}
+                  </div>
                   <div>
-                    <h3 className="text-base font-bold text-white">{item.name}</h3>
+                    <h3 className="text-sm font-semibold text-white">{item.name}</h3>
                     <span 
                       style={{ color: item.color }} 
                       className="text-[10px] font-semibold uppercase tracking-wider"

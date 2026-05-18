@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 const AppContent: React.FC = () => {
   const [activePage, setActivePage] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSynced, setLastSynced] = useState(new Date().toLocaleTimeString());
 
@@ -39,9 +40,14 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      <Sidebar 
+        activePage={activePage} 
+        setActivePage={setActivePage} 
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+      />
       
-      <main className="flex-1 transition-all duration-300 ml-16 lg:ml-60">
+      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-[60px]' : 'ml-[220px]'}`}>
         <TopBar 
           onSync={handleSync} 
           isSyncing={isSyncing} 

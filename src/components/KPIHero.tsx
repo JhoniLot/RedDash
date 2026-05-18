@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
-  LineChart, 
-  Line, 
+  AreaChart, 
+  Area, 
   ResponsiveContainer 
 } from 'recharts';
 import { TrendingUp, TrendingDown } from 'lucide-react';
@@ -19,24 +19,25 @@ interface KPICardProps {
 
 const KPICard: React.FC<KPICardProps> = ({ title, value, change, data, badge, accentColor = '#5B6EE8' }) => {
   const isPositive = change >= 0;
+  const gradientId = `gradient-${title.replace(/\s+/g, '-').toLowerCase()}`;
   
   return (
-    <div className="card p-4 flex flex-col gap-3">
+    <div className="card p-4 flex flex-col gap-3 hover:border-white/10 hover:bg-white/[0.01] hover:-translate-y-[2px] transition-all duration-300 group cursor-pointer shadow-[0_4px_20px_-10px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.5)]">
       <div className="flex justify-between items-start">
-        <span className="text-xs font-medium text-[--color-text-secondary] uppercase tracking-wider">{title}</span>
+        <span className="text-[10px] font-semibold text-[--color-text-secondary] uppercase tracking-wider">{title}</span>
         {badge && (
-          <span className="tag-neutral">
+          <span className="tag-neutral text-[9px] font-semibold bg-white/5 border border-white/5 py-0.5 px-1.5 rounded">
             {badge}
           </span>
         )}
       </div>
       
       <div className="flex items-end justify-between gap-2">
-        <span className="text-xl font-semibold text-white font-mono tracking-tight leading-none">{value}</span>
-        <div className={`flex items-center text-[11px] font-semibold shrink-0 mb-0.5 ${isPositive ? 'text-success' : 'text-danger'}`}>
+        <span className="text-2xl font-bold text-white tracking-tight leading-none">{value}</span>
+        <div className={`flex items-center text-[10px] font-bold shrink-0 mb-0.5 ${isPositive ? 'text-success' : 'text-danger'}`}>
           {isPositive 
-            ? <TrendingUp size={11} className="mr-1" /> 
-            : <TrendingDown size={11} className="mr-1" />
+            ? <TrendingUp size={10} className="mr-0.5" /> 
+            : <TrendingDown size={10} className="mr-0.5" />
           }
           {Math.abs(change)}%
         </div>
@@ -44,17 +45,24 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, change, data, badge, ac
       
       <div className="h-9 w-full -mx-0">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <Line 
+          <AreaChart data={data}>
+            <defs>
+              <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={accentColor} stopOpacity={0.12}/>
+                <stop offset="100%" stopColor={accentColor} stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            <Area 
               type="monotone" 
               dataKey="value" 
               stroke={accentColor}
               strokeWidth={1.5} 
+              fill={`url(#${gradientId})`}
               dot={false} 
               isAnimationActive={false}
               strokeOpacity={0.7}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
