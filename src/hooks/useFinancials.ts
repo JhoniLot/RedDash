@@ -18,6 +18,10 @@ export const useFinancials = (conversions: ConversionData[], reports: ReportRow[
     // From Reports (mostly for Ad Spend)
     reports.forEach(row => {
       totalAdSpend += row.cost;
+      if (conversions.length === 0) {
+        totalRevenue += row.revenue;
+        totalConversions += row.conversions;
+      }
     });
 
     // From Conversions (for detailed revenue and product-specific costs)

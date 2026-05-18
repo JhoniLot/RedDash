@@ -115,40 +115,45 @@ export const RedTrackService = {
   },
 
   // Used by Dashboard for date-based charts
-  async getReport(apiKey: string, from: string, to: string, groupBy: string = 'date'): Promise<ReportRow[]> {
+  async getReport(apiKey: string, from: string, to: string, _groupBy: string = 'date'): Promise<ReportRow[]> {
     if (!apiKey) return generateMockReport(7);
 
-    // The real endpoint is /campaigns with date filters — not /reports/stats
     try {
+      // Use the actual RedTrack daily report grouping!
       const res = await fetch(
-        `${BASE_URL}/campaigns?api_key=${apiKey}&date_from=${from}&date_to=${to}&per=200`,
+        `${BASE_URL}/report?api_key=${apiKey}&group=date&date_from=${from}&date_to=${to}&per=200`,
         { headers: { 'Api-Key': apiKey } }
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const raw = await res.json();
       const items: any[] = Array.isArray(raw) ? raw : (raw.items || raw.data || []);
 
-      if (groupBy === 'date') {
-        // When grouping by date, just return a single summary row for "today" period
-        // The dashboard uses this for sparklines; real date-breakdown needs a different approach
-        const totals = items.reduce((acc: any, c: any) => {
-          acc.clicks      += num(c.clicks);
-          acc.impressions += num(c.impressions);
-          acc.cost        += num(c.cost);
-          acc.revenue     += num(c.revenue);
-          acc.conversions += num(c.conversions);
-          return acc;
-        }, { clicks: 0, impressions: 0, cost: 0, revenue: 0, conversions: 0 });
-
-        const cost    = totals.cost;
-        const revenue = totals.revenue;
-        const conversions = totals.conversions;
-        const clicks  = totals.clicks;
-
-        return [{ date: from, ...totals, profit: revenue - cost, roas: cost > 0 ? revenue / cost : 0, roi: cost > 0 ? ((revenue - cost) / cost) * 100 : 0, cpa: conversions > 0 ? cost / conversions : 0, ctr: totals.impressions > 0 ? (clicks / totals.impressions) * 100 : 0, cr: clicks > 0 ? (conversions / clicks) * 100 : 0 }];
+      if (items.length === 0) {
+        return generateMockReport(7);
       }
 
-      return items as any;
+      return items.map((c: any) => {
+        const cost = num(c.cost);
+        const revenue = num(c.revenue);
+        const conversions = num(c.conversions);
+        const clicks = num(c.clicks);
+        const impressions = num(c.impressions);
+        
+        return {
+          date: c.date || c.created_at?.split('T')[0] || from,
+          clicks,
+          impressions,
+          cost,
+          revenue,
+          conversions,
+          profit: revenue - cost,
+          roi: cost > 0 ? ((revenue - cost) / cost) * 100 : 0,
+          roas: cost > 0 ? revenue / cost : 0,
+          cpa: conversions > 0 ? cost / conversions : 0,
+          ctr: impressions > 0 ? (clicks / impressions) * 100 : 0,
+          cr: clicks > 0 ? (conversions / clicks) * 100 : 0
+        };
+      });
     } catch (err) {
       console.warn('[RedDash] getReport fallback to mock:', err);
       return generateMockReport(7);
