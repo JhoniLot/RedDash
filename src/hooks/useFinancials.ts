@@ -15,16 +15,14 @@ export const useFinancials = (conversions: ConversionData[], reports: ReportRow[
     let totalPlatformFees = 0;
     let totalOtherFees = 0;
 
-    // From Reports (mostly for Ad Spend)
+    // From Reports (always use reports for the absolute Revenue, Conversions and Spend totals)
     reports.forEach(row => {
       totalAdSpend += row.cost;
-      if (conversions.length === 0) {
-        totalRevenue += row.revenue;
-        totalConversions += row.conversions;
-      }
+      totalRevenue += row.revenue;
+      totalConversions += row.conversions;
     });
 
-    // From Conversions (for detailed revenue and product-specific costs)
+    // From Conversions (for detailed revenue and product-specific costs in the list)
     const processedConversions = conversions.map(conv => {
       const product = products.find(p => p.name === conv.offer_name);
       
@@ -36,8 +34,6 @@ export const useFinancials = (conversions: ConversionData[], reports: ReportRow[
 
       const netProfit = revenue - productCost - taxAmount - platformFeeAmount - otherFees;
       
-      totalRevenue += revenue;
-      totalConversions += 1;
       totalProductCosts += productCost;
       totalTaxes += taxAmount;
       totalPlatformFees += platformFeeAmount;
