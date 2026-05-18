@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { RedTrackService } from '../services/redtrack';
 import { motion } from 'framer-motion';
-import { Key, Eye, EyeOff, CheckCircle2, XCircle, RefreshCw, LogOut, Copy, Check, Link2, Info, Sparkles } from 'lucide-react';
+import { Key, Eye, EyeOff, CheckCircle2, XCircle, RefreshCw, LogOut, Copy, Check, Link2, Info, Sparkles, UserPlus, Trash2, Users } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 
 const UTM_PLATFORMS = [
@@ -33,7 +33,10 @@ const Settings: React.FC = () => {
     customLogo,
     setCustomLogo,
     customName,
-    setCustomName
+    setCustomName,
+    teamMembers,
+    inviteTeamMember,
+    removeTeamMember
   } = useAppContext();
   const [tempKey, setTempKey] = useState(apiKey);
   const [showKey, setShowKey] = useState(false);
@@ -41,6 +44,16 @@ const Settings: React.FC = () => {
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activePlatform, setActivePlatform] = useState('tiktok');
+  const [inviteEmail, setInviteEmail] = useState('');
+
+  const handleInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail || !inviteEmail.trim()) return;
+    const success = inviteTeamMember(inviteEmail.trim());
+    if (success) {
+      setInviteEmail('');
+    }
+  };
 
   const handleCopy = (snippet: string, id: string) => {
     navigator.clipboard.writeText(snippet);
@@ -321,6 +334,101 @@ const Settings: React.FC = () => {
               <p className="text-xs text-[--color-text-secondary] mb-4">Mock display preferences</p>
               <div className="h-9 bg-white/5 rounded-lg mb-3" />
               <div className="h-9 bg-white/5 rounded-lg" />
+            </div>
+          </div>
+        {/* Gestão de Equipe */}
+        {userPlan !== 'solo' ? (
+          <div className="card p-5 border-primary/20">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Users size={16} className="text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Gestão de Equipe</h3>
+                <p className="text-xs text-[--color-text-secondary]">Gerencie convites e membros com acesso ao painel</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleInvite} className="flex gap-2 mb-4">
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                className="flex-1 bg-[--color-background] border border-border rounded-lg px-4 py-2.5 text-xs text-white placeholder:text-[--color-text-muted] focus:border-primary outline-none transition-all"
+                placeholder="E-mail do convidado..."
+                required
+              />
+              <button
+                type="submit"
+                className="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-1.5 transition-all"
+              >
+                <UserPlus size={14} />
+                Convidar
+              </button>
+            </form>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {teamMembers.map((member) => (
+                <div key={member.id} className="flex items-center justify-between p-2.5 bg-surface-2 border border-border rounded-lg">
+                  <div className="flex flex-col truncate pr-2">
+                    <span className="text-xs font-semibold text-white truncate">{member.email}</span>
+                    <span className="text-[10px] text-[--color-text-secondary] capitalize">{member.role}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-right">
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider
+                      ${member.status === 'active' 
+                        ? 'bg-success/10 text-success' 
+                        : 'bg-warning/10 text-warning animate-pulse'}`}
+                    >
+                      {member.status === 'active' ? 'Ativo' : 'Pendente'}
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (confirm(`Deseja revogar o acesso do membro ${member.email}?`)) {
+                          removeTeamMember(member.id);
+                        }
+                      }}
+                      className="text-[--color-text-muted] hover:text-danger p-1 rounded transition-colors"
+                      title="Excluir Membro"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {teamMembers.length === 0 && (
+                <div className="text-center py-4 text-xs text-[--color-text-muted]">
+                  Nenhum membro de equipe cadastrado.
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="card p-5 opacity-70 relative overflow-hidden border border-dashed border-border">
+            <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center p-4 text-center">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+                <Users size={16} />
+              </div>
+              <h4 className="text-xs font-bold text-white mb-1">Gestão de Equipe (Bloqueado 🔒)</h4>
+              <p className="text-[10px] text-[--color-text-secondary] max-w-[280px] mb-3">
+                Adicione gestores, analistas e parceiros para trabalharem juntos no mesmo painel! Disponível no Plano Agency e Enterprise.
+              </p>
+              <button
+                onClick={() => {
+                  alert('Acesse a aba "Planos" no menu lateral para fazer o upgrade para o plano Agency e liberar esta funcionalidade!');
+                }}
+                className="bg-primary/20 hover:bg-primary/30 border border-primary/35 text-white text-[10px] font-bold px-3 py-1.5 rounded transition-all active:scale-[0.98]"
+              >
+                Desbloquear no Plano Agency
+              </button>
+            </div>
+            
+            {/* Blurry mock fields */}
+            <div className="filter blur-[1.5px] select-none pointer-events-none">
+              <h3 className="text-sm font-semibold text-white mb-1">Gestão de Equipe</h3>
+              <p className="text-xs text-[--color-text-secondary] mb-4">Adicionar membros de time</p>
+              <div className="h-10 bg-white/5 rounded-lg mb-3" />
+              <div className="h-14 bg-white/5 rounded-lg" />
             </div>
           </div>
         )}

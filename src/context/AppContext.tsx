@@ -11,6 +11,20 @@ export interface Product {
   otherFees: number;
 }
 
+export interface Workspace {
+  id: string;
+  name: string;
+  apiKey: string;
+  isConnected: boolean;
+}
+
+export interface TeamMember {
+  id: string;
+  email: string;
+  role: 'owner' | 'manager' | 'viewer';
+  status: 'active' | 'pending';
+}
+
 interface DateRange {
   from: string;
   to: string;
@@ -38,6 +52,14 @@ interface AppContextType {
   setCustomLogo: (url: string) => void;
   customName: string;
   setCustomName: (name: string) => void;
+  workspaces: Workspace[];
+  activeWorkspaceId: string;
+  setActiveWorkspaceId: (id: string) => void;
+  addWorkspace: (name: string) => boolean;
+  deleteWorkspace: (id: string) => void;
+  teamMembers: TeamMember[];
+  inviteTeamMember: (email: string) => boolean;
+  removeTeamMember: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -64,13 +86,44 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Workspaces (Clients)
+  const [workspaces, setWorkspacesState] = useState<Workspace[]>(() => {
+    const saved = localStorage.getItem('@reddash:workspaces');
+    if (saved) return JSON.parse(saved);
+    return [{ id: 'default', name: 'Workspace Padrão', apiKey: localStorage.getItem('@reddash:api_key') || '', isConnected: localStorage.getItem('@reddash:api_key') !== null }];
+  });
+  const [activeWorkspaceId, setActiveWorkspaceIdState] = useState(() => {
+    return localStorage.getItem('@reddash:active_workspace_id') || 'default';
+  });
+
+  // Team Members
+  const [teamMembers, setTeamMembersState] = useState<TeamMember[]>(() => {
+    const saved = localStorage.getItem('@reddash:team_members');
+    return saved ? JSON.parse(saved) : [
+      { id: '1', email: 'afiliado.parceiro@gmail.com', role: 'manager', status: 'active' },
+      { id: '2', email: 'designer.copys@hotmail.com', role: 'viewer', status: 'pending' }
+    ];
+  });
+
   // Wrappers that also persist to localStorage
   const setApiKey = (key: string) => {
     localStorage.setItem('@reddash:api_key', key);
     setApiKeyState(key);
+    // Sync to active workspace
+    setWorkspacesState(prev => {
+      const updated = prev.map(w => w.id === activeWorkspaceId ? { ...w, apiKey: key, isConnected: key !== '' } : w);
+      localStorage.setItem('@reddash:workspaces', JSON.stringify(updated));
+      return updated;
+    });
   };
   const setIsConnected = (connected: boolean) => {
     setIsConnectedState(connected);
+    // Sync to active workspace
+    setWorkspacesState(prev => {
+      const updated = prev.map(w => w.id === activeWorkspaceId ? { ...w, isConnected: connected } : w);
+      localStorage.setItem('@reddash:workspaces', JSON.stringify(updated));
+      return updated;
+    });
   };
   const setCurrency = (c: 'USD' | 'BRL' | 'EUR') => {
     localStorage.setItem('@reddash:currency', c);
@@ -87,6 +140,78 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const setCustomName = (name: string) => {
     localStorage.setItem('@reddash:custom_name', name);
     setCustomNameState(name);
+  };
+
+  const setActiveWorkspaceId = (id: string) => {
+    localStorage.setItem('@reddash:active_workspace_id', id);
+    setActiveWorkspaceIdState(id);
+    const ws = workspaces.find(w => w.id === id);
+    if (ws) {
+      setApiKeyState(ws.apiKey);
+      setIsConnectedState(ws.isConnected);
+    }
+  };
+
+  const addWorkspace = (name: string): boolean => {
+    if (userPlan === 'solo') {
+      alert('Recurso exclusivo do Plano Agency ou Enterprise! Faça o upgrade para cadastrar múltiplos clientes.');
+      return false;
+    }
+    if (workspaces.length >= 5) {
+      alert('Você atingiu o limite de 5 clientes permitidos no seu plano atual.');
+      return false;
+    }
+    const newWs: Workspace = {
+      id: Math.random().toString(36).substr(2, 9),
+      name,
+      apiKey: '',
+      isConnected: false
+    };
+    const updated = [...workspaces, newWs];
+    localStorage.setItem('@reddash:workspaces', JSON.stringify(updated));
+    setWorkspacesState(updated);
+    setActiveWorkspaceId(newWs.id);
+    return true;
+  };
+
+  const deleteWorkspace = (id: string) => {
+    if (id === 'default') {
+      alert('O Workspace padrão de faturamento do anunciante principal não pode ser deletado.');
+      return;
+    }
+    const updated = workspaces.filter(w => w.id !== id);
+    localStorage.setItem('@reddash:workspaces', JSON.stringify(updated));
+    setWorkspacesState(updated);
+    if (activeWorkspaceId === id) {
+      setActiveWorkspaceId('default');
+    }
+  };
+
+  const inviteTeamMember = (email: string): boolean => {
+    if (userPlan === 'solo') {
+      alert('O Plano Solo é restrito a apenas 1 usuário. Faça o upgrade para o Plano Agency para gerenciar equipe!');
+      return false;
+    }
+    if (teamMembers.length >= 5) {
+      alert('Você atingiu o limite máximo de 5 membros de equipe do plano de agência.');
+      return false;
+    }
+    const newMember: TeamMember = {
+      id: Math.random().toString(36).substr(2, 9),
+      email,
+      role: 'viewer',
+      status: 'pending'
+    };
+    const updated = [...teamMembers, newMember];
+    localStorage.setItem('@reddash:team_members', JSON.stringify(updated));
+    setTeamMembersState(updated);
+    return true;
+  };
+
+  const removeTeamMember = (id: string) => {
+    const updated = teamMembers.filter(m => m.id !== id);
+    localStorage.setItem('@reddash:team_members', JSON.stringify(updated));
+    setTeamMembersState(updated);
   };
 
   // Load from Supabase on Mount — skip if URL is clearly invalid
@@ -173,7 +298,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       customLogo,
       setCustomLogo,
       customName,
-      setCustomName
+      setCustomName,
+      workspaces,
+      activeWorkspaceId,
+      setActiveWorkspaceId,
+      addWorkspace,
+      deleteWorkspace,
+      teamMembers,
+      inviteTeamMember,
+      removeTeamMember
     }}>
       {!loading && children}
     </AppContext.Provider>
