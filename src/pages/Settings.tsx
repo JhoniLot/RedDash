@@ -336,6 +336,8 @@ const Settings: React.FC = () => {
               <div className="h-9 bg-white/5 rounded-lg" />
             </div>
           </div>
+        )}
+
         {/* Gestão de Equipe */}
         {userPlan !== 'solo' ? (
           <div className="card p-5 border-primary/20">
