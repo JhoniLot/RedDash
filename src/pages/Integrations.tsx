@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '../components/PageHeader';
-import { Share2, Check, Sparkles, AlertCircle, Trash2, ArrowRight } from 'lucide-react';
+import { Share2, Trash2 } from 'lucide-react';
 import { MetaLogo, TikTokLogo, GoogleAdsLogo } from '../components/BrandLogos';
 
 const renderBrandLogo = (id: string, size = 24) => {

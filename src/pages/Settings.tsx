@@ -70,11 +70,11 @@ const Settings: React.FC = () => {
     setTesting(false);
 
     if (result.success) {
-      setTestResult({ success: true, message: `Connected successfully — ${result.count} campaigns found.` });
+      setTestResult({ success: true, message: 'Conexão realizada com sucesso!' });
       setApiKey(tempKey);
       setIsConnected(true);
     } else {
-      setTestResult({ success: false, message: result.message });
+      setTestResult({ success: false, message: result.message || 'Erro desconhecido ao conectar' });
     }
   };
 

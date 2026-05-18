@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Check, CreditCard, Sparkles, User, Users, Shield, ArrowRight } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useAppContext } from '../context/AppContext';
@@ -70,7 +69,7 @@ const Plans: React.FC = () => {
     <div className="p-6 max-w-7xl mx-auto space-y-6">
       <PageHeader 
         title="Planos & Assinatura" 
-        subtitle="Escolha o plano ideal para alavancar os resultados da sua operação de tráfego com o RedTrack."
+        description="Escolha o plano ideal para alavancar os resultados da sua operação de tráfego com o RedTrack."
       />
 
       {/* Simulador de Plano (WOW FACTOR) */}

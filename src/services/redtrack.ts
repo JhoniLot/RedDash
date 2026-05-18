@@ -1,3 +1,5 @@
+import { PlatformAdsService } from './platformAds';
+
 const BASE_URL = import.meta.env.DEV ? '/api/redtrack' : 'https://api.redtrack.io';
 
 export interface CampaignData {
@@ -95,30 +97,6 @@ const num = (v: any): number => {
   const n = Number(v);
   return isNaN(n) ? 0 : n;
 };
-
-// ─── Helper: map raw API campaign to CampaignData ────────────────────────────
-const mapCampaign = (item: any): CampaignData => {
-  const cost    = num(item.cost);
-  const revenue = num(item.revenue);
-  const conversions = num(item.conversions);
-  const clicks  = num(item.clicks);
-  const impressions = num(item.impressions);
-  const profit  = num(item.profit  ?? (revenue - cost));
-  const roas    = num(item.roas    ?? (cost > 0 ? revenue / cost : 0));
-  const roi     = num(item.roi     ?? (cost > 0 ? ((revenue - cost) / cost) * 100 : 0));
-  const cpa     = num(item.cpa     ?? (conversions > 0 ? cost / conversions : 0));
-  const ctr     = num(item.ctr     ?? (impressions > 0 ? (clicks / impressions) * 100 : 0));
-  const cr      = num(item.cr      ?? (clicks > 0 ? (conversions / clicks) * 100 : 0));
-
-  return {
-    id:          String(item._id || item.id || Math.random()),
-    name:        String(item.title || item.name || 'Unnamed'),
-    status:      item.status === 1 || item.status === 'active' ? 'active' : 'paused',
-    clicks, impressions, cost, revenue, conversions,
-    profit, roi, roas, cpa, ctr, cr,
-  };
-};
-
 // ─── RedTrackService ──────────────────────────────────────────────────────────
 export const RedTrackService = {
 
