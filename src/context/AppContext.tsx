@@ -32,6 +32,8 @@ interface AppContextType {
   saveToSupabase: () => Promise<void>;
   refreshKey: number;
   refreshData: () => void;
+  userPlan: 'solo' | 'agency' | 'enterprise';
+  setUserPlan: (plan: 'solo' | 'agency' | 'enterprise') => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -52,6 +54,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [isConnected, setIsConnectedState] = useState(() => localStorage.getItem('@reddash:api_key') !== null && localStorage.getItem('@reddash:api_key') !== '');
   const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange());
   const [currency, setCurrencyState] = useState<'USD' | 'BRL' | 'EUR'>(() => (localStorage.getItem('@reddash:currency') as 'USD' | 'BRL' | 'EUR') || 'USD');
+  const [userPlan, setUserPlanState] = useState<'solo' | 'agency' | 'enterprise'>(() => (localStorage.getItem('@reddash:user_plan') as 'solo' | 'agency' | 'enterprise') || 'solo');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,6 +69,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const setCurrency = (c: 'USD' | 'BRL' | 'EUR') => {
     localStorage.setItem('@reddash:currency', c);
     setCurrencyState(c);
+  };
+  const setUserPlan = (plan: 'solo' | 'agency' | 'enterprise') => {
+    localStorage.setItem('@reddash:user_plan', plan);
+    setUserPlanState(plan);
   };
 
   // Load from Supabase on Mount — skip if URL is clearly invalid
@@ -146,7 +153,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       updateProduct,
       saveToSupabase,
       refreshKey,
-      refreshData
+      refreshData,
+      userPlan,
+      setUserPlan
     }}>
       {!loading && children}
     </AppContext.Provider>

@@ -8,6 +8,7 @@ import Products from './pages/Products';
 import Financial from './pages/Financial';
 import Settings from './pages/Settings';
 import Integrations from './pages/Integrations';
+import Plans from './pages/Plans';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const AppContent: React.FC = () => {
@@ -33,6 +34,7 @@ const AppContent: React.FC = () => {
       case 'products': return <Products />;
       case 'financial': return <Financial />;
       case 'integrations': return <Integrations />;
+      case 'plans': return <Plans />;
       case 'settings': return <Settings />;
       default: return <Dashboard />;
     }

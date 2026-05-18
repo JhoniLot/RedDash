@@ -8,7 +8,8 @@ import {
   Activity,
   ChevronLeft,
   ChevronRight,
-  Share2
+  Share2,
+  CreditCard
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
@@ -28,6 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, collapsed,
     { id: 'products', label: 'Products', icon: Package },
     { id: 'financial', label: 'Financial', icon: Wallet },
     { id: 'integrations', label: 'Integrações', icon: Share2 },
+    { id: 'plans', label: 'Planos', icon: CreditCard },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
