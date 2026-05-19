@@ -177,13 +177,21 @@ export const RedTrackService = {
         let platformCampaigns: CampaignData[] = [];
         if (metaInt) {
           try {
-            const mc = await PlatformAdsService.getMetaCampaigns({ accessToken: '', accountId: metaInt.selectedAdAccount || '', connected: true });
+            const mc = await PlatformAdsService.getMetaCampaigns({
+              accessToken: metaInt.accessToken || '',
+              accountId: metaInt.accountId || metaInt.selectedAdAccount || '',
+              connected: true
+            });
             platformCampaigns = [...platformCampaigns, ...mc];
           } catch (e) { console.warn('Meta live pull error:', e); }
         }
         if (tiktokInt) {
           try {
-            const tc = await PlatformAdsService.getTikTokCampaigns({ accessToken: '', accountId: tiktokInt.selectedAdAccount || '', connected: true });
+            const tc = await PlatformAdsService.getTikTokCampaigns({
+              accessToken: tiktokInt.accessToken || '',
+              accountId: tiktokInt.accountId || tiktokInt.selectedAdAccount || '',
+              connected: true
+            });
             platformCampaigns = [...platformCampaigns, ...tc];
           } catch (e) { console.warn('TikTok live pull error:', e); }
         }
