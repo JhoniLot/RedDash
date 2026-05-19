@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conexão Segura - RedDash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --color-bg: #090B0F;
+      --color-surface: #121620;
+      --color-surface-2: #1A1F2E;
+      --color-primary: #FF3366;
+      --color-border: rgba(255, 255, 255, 0.06);
+      --color-text-primary: #FFFFFF;
+      --color-text-secondary: #8E9BAE;
+      --color-text-muted: #5B6B7F;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: 'Outfit', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      padding: 40px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin: 20px;
+    }
+
+    .glow {
+      position: absolute;
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--platform-color-alpha, rgba(255, 51, 102, 0.15)) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+      transition: background 0.3s ease;
+    }
+
+    .content-box {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .logo-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .reddash-badge {
+      border-color: var(--color-primary);
+      box-shadow: 0 8px 16px rgba(255, 51, 102, 0.15);
+    }
+
+    .connector-line {
+      width: 40px;
+      height: 2px;
+      background: dashed rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .connector-line::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--platform-color, var(--color-primary));
+      animation: slide 1.5s infinite linear;
+    }
+
+    @keyframes slide {
+      0% { left: 0; opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { left: 32px; opacity: 0; }
+    }
+
+    .status-text {
+      text-transform: uppercase;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--platform-color, var(--color-primary));
+      margin-bottom: -12px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #FFF;
+      line-height: 1.2;
+    }
+
+    h1 span {
+      color: var(--platform-color, var(--color-primary));
+    }
+
+    .desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      max-width: 340px;
+    }
+
+    .permissions-box {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .permission-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    .permission-icon {
+      color: #34A853;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--platform-color, var(--color-primary));
+      color: #000000;
+      border: none;
+      padding: 14px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.1);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      box-shadow: none;
+      padding: 12px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: #FFF;
+    }
+
+    /* Loader */
+    .loader {
+      width: 48px;
+      height: 48px;
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top-color: var(--platform-color, var(--color-primary));
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Success Circle */
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(52, 168, 83, 0.1);
+      border: 2px solid #34A853;
+      color: #34A853;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="glow" id="glow"></div>
+    
+    <!-- STATE 1: LOADER -->
+    <div class="content-box" id="state-loader">
+      <div class="loader"></div>
+      <div>
+        <h1 style="font-size: 18px; font-weight: 500;">Estabelecendo conexão segura...</h1>
+        <p class="desc" style="margin-top: 8px; font-size: 12px;">Autenticando chaves de criptografia SSL com a rede parceira.</p>
+      </div>
+    </div>
+
+    <!-- STATE 2: AUTHORIZE -->
+    <div class="content-box hidden" id="state-auth">
+      <div class="logo-container">
+        <!-- Brand Badge -->
+        <div class="logo-badge" id="platform-badge">
+          <!-- Logo will be inserted dynamically -->
+        </div>
+        <div class="connector-line"></div>
+        <!-- RedDash Badge -->
+        <div class="logo-badge reddash-badge">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF3366" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span class="status-text" id="platform-status">TikTok Integration</span>
+        <h1 id="auth-title">Vincular ao <span>RedDash</span></h1>
+        <p class="desc" id="auth-desc">Conecte sua conta de anúncios para sincronizar gastos reais de CPM diários, visualizações e taxas de cliques em tempo real.</p>
+      </div>
+
+      <div class="permissions-box">
+        <div class="permission-item">
+          <span class="permission-icon">✓</span>
+          <span>Leitura de campanhas e conjuntos de anúncios</span>
+        </div>
+        <div class="permission-item">
+          <span class="permission-icon">✓</span>
+          <span>Leitura de relatórios de custo diário e impressões</span>
+        </div>
+        <div class="permission-item" id="write-permission">
+          <span class="permission-icon">✓</span>
+          <span>Permissão para pausar/ativar anúncios pela dash</span>
+        </div>
+      </div>
+
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn" id="btn-authorize">
+          <span>Autorizar Conexão</span>
+        </button>
+        <button class="btn btn-secondary" onclick="window.close()">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- STATE 3: SUCCESS -->
+    <div class="content-box hidden" id="state-success">
+      <div class="success-icon">✓</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <h1 style="color: #34A853;">Integração Ativa!</h1>
+        <p class="desc">A sua conta foi vinculada ao <strong>RedDash</strong> com sucesso. Esta janela será fechada em breve...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const platformId = urlParams.get('platformId') || 'tiktok';
+
+    const CONFIGS = {
+      tiktok: {
+        name: 'TikTok Ads',
+        color: '#00F2FE',
+        colorAlpha: 'rgba(0, 242, 254, 0.15)',
+        status: 'TikTok API Partner',
+        logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#000000" style="background:#FFF; padding:4px; border-radius:8px;"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.59 4.23.95 1.12 2.27 1.91 3.73 2.23v3.96c-1.39-.08-2.76-.51-3.95-1.25-.87-.55-1.63-1.26-2.22-2.1v7.69c.02 1.34-.33 2.67-1.01 3.81-.72 1.15-1.81 2.01-3.07 2.47-1.31.47-2.75.52-4.09.13-1.33-.37-2.52-1.21-3.37-2.35-.91-1.19-1.39-2.68-1.36-4.18.01-1.51.52-2.99 1.45-4.17.88-1.12 2.11-1.92 3.49-2.26 1.14-.28 2.33-.24 3.45.1v3.97c-.7-.22-1.46-.22-2.16-.01-.73.2-1.38.65-1.83 1.26-.52.7-.75 1.58-.66 2.45.09.87.52 1.67 1.2 2.19.68.51 1.54.74 2.39.63.85-.11 1.62-.59 2.11-1.29.35-.55.51-1.2.48-1.85V.02z"/></svg>`
+      },
+      meta: {
+        name: 'Meta Ads',
+        color: '#1877F2',
+        colorAlpha: 'rgba(24, 119, 242, 0.15)',
+        status: 'Meta Marketing Partner',
+        logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`
+      },
+      google: {
+        name: 'Google Ads',
+        color: '#34A853',
+        colorAlpha: 'rgba(52, 168, 83, 0.15)',
+        status: 'Google Ads Partner',
+        logo: `<svg width="32" height="32" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.266 9.765A7.077 7.077 0 0 1 12 4.907c1.69 0 3.218.6 4.418 1.586L19.78 3.13C17.65 1.196 14.93 0 12 0 7.24 0 3.13 2.73 1.14 6.72l4.126 3.045z"/><path fill="#FBBC05" d="M16.418 6.493a7.077 7.077 0 0 1 0 11.014l3.362 3.363C21.905 18.794 24 15.655 24 12c0-3.655-2.095-6.794-4.22-8.87l-3.362 3.363z"/><path fill="#4285F4" d="M18.78 20.87C17.65 22.804 14.93 24 12 24c-4.76 0-8.87-2.73-10.86-6.72l4.126-3.045c.82 2.628 3.238 4.858 6.734 4.858 1.69 0 3.218-.6 4.418-1.586l3.362 3.363z"/><path fill="#34A853" d="M1.14 17.28A7.077 7.077 0 0 1 1.14 6.72L5.266 9.765c0 1.48.33 2.923.86 4.47l-4.986 3.045z"/></svg>`
+      }
+    };
+
+    const config = CONFIGS[platformId] || CONFIGS.tiktok;
+
+    // Apply config colors & texts
+    document.documentElement.style.setProperty('--platform-color', config.color);
+    document.documentElement.style.setProperty('--platform-color-alpha', config.colorAlpha);
+    
+    document.getElementById('platform-badge').innerHTML = config.logo;
+    document.getElementById('platform-status').innerText = config.status;
+    document.getElementById('auth-title').innerHTML = `Vincular ao <span>${config.name}</span>`;
+    
+    if (platformId === 'google') {
+      document.getElementById('write-permission').classList.add('hidden');
+      document.getElementById('auth-desc').innerText = 'Conecte sua conta do Google Ads para sincronizar gastos de pesquisa, impressões do Youtube e taxas de cliques automaticamente.';
+    }
+
+    // Simulate loader to auth window
+    setTimeout(() => {
+      document.getElementById('state-loader').classList.add('hidden');
+      document.getElementById('state-auth').classList.remove('hidden');
+    }, 1200);
+
+    // Handle Authorize action
+    document.getElementById('btn-authorize').addEventListener('click', () => {
+      // 1. Move to Success state
+      document.getElementById('state-auth').classList.add('hidden');
+      document.getElementById('state-success').classList.remove('hidden');
+
+      // 2. Broadcast success back to opener window
+      if (window.opener) {
+        window.opener.postMessage({
+          type: 'oauth-success',
+          platformId: platformId
+        }, '*');
+      }
+
+      // 3. Close the popup
+      setTimeout(() => {
+        window.close();
+      }, 1600);
+    });
+  </script>
+</body>
+</html>

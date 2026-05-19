@@ -147,14 +147,7 @@ const Integrations: React.FC = () => {
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
 
-    let oauthUrl = '';
-    if (id === 'tiktok') {
-      oauthUrl = 'https://ads.tiktok.com/i18n/login?redirect=https%3A%2F%2Fbusiness-api.tiktok.com%2Fportal%2Fauth%3Fapp_id%3D7597254579792969745%26redirect_uri%3Dhttps%253A%252F%252Fapp.utmify.com.br%252Ftiktok%252Fcallback%252F&_source_=marketing_api';
-    } else if (id === 'meta') {
-      oauthUrl = 'https://www.facebook.com/v18.0/dialog/oauth?client_id=7597254579792969745&redirect_uri=https%3A%2F%2Fapp.utmify.com.br%2Ffacebook%2Fcallback%2F&scope=ads_read,ads_management,business_management';
-    } else {
-      oauthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=7597254579792969745-google&redirect_uri=https%3A%2F%2Fapp.utmify.com.br%2Fgoogle%2Fcallback%2F&response_type=code&scope=https://www.googleapis.com/auth/adwords';
-    }
+    const oauthUrl = `${window.location.origin}/oauth-sim.html?platformId=${id}`;
 
     const popup = window.open(
       oauthUrl,
