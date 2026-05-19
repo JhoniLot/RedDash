@@ -103,9 +103,7 @@ export const RedTrackService = {
   async testConnection(apiKey: string) {
     if (!apiKey) return { success: false, message: 'API Key is required' };
     try {
-      const res = await fetch(`${BASE_URL}/campaigns?api_key=${apiKey}&per=1`, {
-        headers: { 'Api-Key': apiKey },
-      });
+      const res = await fetch(`${BASE_URL}/campaigns?api_key=${apiKey}&per=1`);
       if (res.status === 401) throw new Error('API Key inválida');
       if (!res.ok) throw new Error(`Erro ${res.status}`);
       return { success: true };
@@ -121,8 +119,7 @@ export const RedTrackService = {
     try {
       // Use the actual RedTrack daily report grouping!
       const res = await fetch(
-        `${BASE_URL}/report?api_key=${apiKey}&group=date&date_from=${from}&date_to=${to}&per=200`,
-        { headers: { 'Api-Key': apiKey } }
+        `${BASE_URL}/report?api_key=${apiKey}&group=date&date_from=${from}&date_to=${to}&per=200`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const raw = await res.json();
@@ -192,7 +189,7 @@ export const RedTrackService = {
         }
 
         if (platformCampaigns.length > 0) {
-          const res = await fetch(`${BASE_URL}/report?api_key=${apiKey}&group=sub4&date_from=${thirtyDaysAgo}&date_to=${today}&per=200`, { headers: { 'Api-Key': apiKey } });
+          const res = await fetch(`${BASE_URL}/report?api_key=${apiKey}&group=sub4&date_from=${thirtyDaysAgo}&date_to=${today}&per=200`);
           if (res.ok) {
             const raw = await res.json();
             const redtrackRows: any[] = Array.isArray(raw) ? raw : (raw.items || raw.data || []);
@@ -216,7 +213,7 @@ export const RedTrackService = {
     const group = groupMap[level];
 
     try {
-      const res = await fetch(`${BASE_URL}/report?api_key=${apiKey}&group=${group}&date_from=${thirtyDaysAgo}&date_to=${today}&per=200`, { headers: { 'Api-Key': apiKey } });
+      const res = await fetch(`${BASE_URL}/report?api_key=${apiKey}&group=${group}&date_from=${thirtyDaysAgo}&date_to=${today}&per=200`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const raw = await res.json();
       const items: any[] = Array.isArray(raw) ? raw : (raw.items || raw.data || []);
@@ -249,8 +246,7 @@ export const RedTrackService = {
     if (!apiKey) return MOCK_CONVERSIONS;
     try {
       const res = await fetch(
-        `${BASE_URL}/conversions?api_key=${apiKey}&date_from=${from}&date_to=${to}&per=100`,
-        { headers: { 'Api-Key': apiKey } }
+        `${BASE_URL}/conversions?api_key=${apiKey}&date_from=${from}&date_to=${to}&per=100`
       );
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const raw = await res.json();
